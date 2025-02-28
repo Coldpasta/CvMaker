@@ -1,4 +1,4 @@
-package com.lm.cvmaker.persistance;
+package com.lm.cvmaker.persistence;
 
 import com.lm.cvmaker.model.CV;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -15,7 +15,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/register")
-    public User registerUser(@RequestBody User user) {
+    public String registerUser(@RequestBody User user) {
         return userService.registerUser(user.getName(), user.getEmail(), user.getPassword());
     }
 
@@ -26,7 +26,7 @@ public class UserController {
 
     @PostMapping("/login")
     public String loginUser(@RequestBody User user) {
-        boolean isValid = userService.loginUser(user.getEmail(), user.getPassword());
+        boolean isValid = Boolean.parseBoolean(userService.loginUser(user.getEmail(), user.getPassword()));
 
         if (isValid) {
             return "Login successful!";

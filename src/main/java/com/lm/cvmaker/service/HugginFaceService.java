@@ -2,8 +2,8 @@ package com.lm.cvmaker.service;
 
 import com.lm.cvmaker.model.CV;
 import com.lm.cvmaker.model.User;
-import com.lm.cvmaker.persistance.CvRepository;
-import com.lm.cvmaker.persistance.UserRepository;
+import com.lm.cvmaker.persistence.CvRepository;
+import com.lm.cvmaker.persistence.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
