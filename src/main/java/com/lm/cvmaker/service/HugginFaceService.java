@@ -1,6 +1,6 @@
 package com.lm.cvmaker.service;
 
-import com.lm.cvmaker.model.CV;
+import com.lm.cvmaker.model.Cv;
 import com.lm.cvmaker.model.User;
 import com.lm.cvmaker.persistence.CvRepository;
 import com.lm.cvmaker.persistence.UserRepository;
@@ -9,10 +9,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class HugginFaceService {
@@ -33,7 +30,7 @@ public class HugginFaceService {
     }
 
 
-    public CV generateAndSaveCv(Long userId, String keywords) {
+    public Cv generateAndSaveCv(Long userId, String keywords) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + apiKey);
         headers.set("Content-Type", "application/json");
@@ -51,14 +48,38 @@ public class HugginFaceService {
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            CV cv = new CV(keywords, generatedText, user);
+            Cv cv = new Cv(keywords, generatedText, user);
             return cvRepository.save(cv);
         }
         throw new RuntimeException("User not found");
 
     }
+    public String generateSummary(Cv cv) {
+        RestTemplate restTemplate = new RestTemplate();
 
-    public List<CV> getUserCvs(Long userId) {
+        // Convert CV into a prompt for AI
+        String prompt = "Generate a professional summary for a candidate with skills: " +
+                String.join(", ", cv.getSkills()) +
+                " and experience in " +
+                cv.getExperiences().stream()
+                        .map(exp -> exp.getJobTitle() + " at " + exp.getCompany())
+                        .toList();
+
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("inputs", prompt);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + apiKey);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Map<String, String>> entity = new HttpEntity<>(requestBody, headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, entity, String.class);
+
+        return response.getBody();
+    }
+
+    public List<Cv> getUserCvs(Long userId) {
         return cvRepository.findByUserId(userId);
     }
 }

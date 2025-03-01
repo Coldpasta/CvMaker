@@ -1,12 +1,12 @@
 package com.lm.cvmaker.persistence;
 
-import com.lm.cvmaker.model.Cv;
+import com.lm.cvmaker.model.Education;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface CvRepository extends JpaRepository<Cv, Long> {
-    List<Cv> findByUserId(Long UserId);
+public interface EducationRepository extends JpaRepository<Education, Long> {
+    List<Education> findByCvId(Long cvId);
 }
