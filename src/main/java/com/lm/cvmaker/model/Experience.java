@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -23,6 +25,7 @@ public class Experience {
     private int startYear;
     private int endYear;
     private String description;
+    private List<String> keywords;
 
     @ManyToOne
     @JoinColumn(name = "cv_id")
