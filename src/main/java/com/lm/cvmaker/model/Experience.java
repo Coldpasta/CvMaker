@@ -15,6 +15,14 @@ import java.util.List;
 @Builder
 public class Experience {
 
+    public Experience(String jobTitle, String company, int startYear, int endYear, List<String> keywords) {
+        this.jobTitle = jobTitle;
+        this.company = company;
+        this.startYear = startYear;
+        this.endYear = endYear;
+        this.keywords = keywords;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,12 +32,15 @@ public class Experience {
     private String jobTitle;
     private int startYear;
     private int endYear;
+    @Lob
     private String description;
+    @ElementCollection
     private List<String> keywords;
 
     @ManyToOne
-    @JoinColumn(name = "cv_id")
+    @JoinColumn(name = "cv_id", nullable = true)
     private Cv cv;
+
 
 
 }

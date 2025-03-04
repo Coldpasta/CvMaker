@@ -1,9 +1,8 @@
 package com.lm.cvmaker.controller;
 
 import com.lm.cvmaker.model.Cv;
+import com.lm.cvmaker.model.CvRequest;
 import com.lm.cvmaker.service.CvService;
-import com.lm.cvmaker.service.HugginFaceService;
-import com.lm.cvmaker.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,23 +13,21 @@ import java.util.List;
 public class CvController {
 
     private final CvService cvService;
-    private final UserService userService;
-    private final HugginFaceService hugginFaceService;
 
-    public CvController(CvService cvService, UserService userService, HugginFaceService hugginFaceService) {
+
+    public CvController(CvService cvService) {
         this.cvService = cvService;
-        this.userService = userService;
-        this.hugginFaceService = hugginFaceService;
-
     }
 
     @PostMapping("/generate")
-    public ResponseEntity<Cv> generateCv(@RequestParam Long userId, @RequestParam String keywords) {
-        Cv generatedCv = cvService.generateAndSaveCv(userId, keywords);
+    public ResponseEntity<Cv> generateCv(@RequestParam Long userId,
+                                         @RequestBody CvRequest request) {
+        Cv generatedCv = cvService.generateAndSaveCv(userId, request);
         return ResponseEntity.ok(generatedCv);
     }
+
     @GetMapping("/{userId}")
-    public ResponseEntity<List<Cv>> getUserCvs(@PathVariable Long userId){
+    public ResponseEntity<List<Cv>> getUserCvs(@PathVariable Long userId) {
         List<Cv> cvs = cvService.getUserCvs(userId);
         return ResponseEntity.ok(cvs);
     }

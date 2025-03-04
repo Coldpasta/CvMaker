@@ -11,8 +11,12 @@ import java.util.List;
 @RequestMapping("/api/cv")
 public class HugginFaceController {
 
-    @Autowired
-    private HugginFaceService hugginFaceService;
+
+    private final HugginFaceService hugginFaceService;
+
+    public HugginFaceController(HugginFaceService hugginFaceService) {
+        this.hugginFaceService = hugginFaceService;
+    }
 
     @PostMapping("/generate/{userId}")
     public Cv generateAndSaveCv(@PathVariable Long userId, @RequestBody String keywords) {

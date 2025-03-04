@@ -1,6 +1,8 @@
 package com.lm.cvmaker.service;
 
 import com.lm.cvmaker.model.Cv;
+import com.lm.cvmaker.model.CvRequest;
+import com.lm.cvmaker.model.Experience;
 import com.lm.cvmaker.model.User;
 import com.lm.cvmaker.persistence.*;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CvService {
@@ -51,14 +54,25 @@ public class CvService {
         return savedCv;
     }
 
-    public Cv generateAndSaveCv(Long userId, String keywords){
+    public Cv generateAndSaveCv(Long userId, CvRequest request) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Cv cv = new Cv();
-        cv.setKeywords(keywords);
-        cv.setUser(user);
+        cv.setKeywords(request.getKeywords());
+        cv.setEducation(request.getEducation());
+        cv.setProjects(request.getProjects());
+
+        List<Experience> experiences = request.getExperiences().stream()
+                .map(exp -> new Experience(exp.getJobTitle(), exp.getCompany(), exp.getStartYear(), exp.getEndYear(), exp.getKeywords()))
+                .collect(Collectors.toList());;
+        cv.setExperiences(experiences);
+
+        for (Experience experience : experiences) {
+            String jobSummary = hugginFaceService.generateExperienceSummary(experience);
+            experience.setDescription(jobSummary);
+        }
 
         String generatedText = hugginFaceService.generateSummary(cv);
         cv.setGeneratedText(generatedText);
