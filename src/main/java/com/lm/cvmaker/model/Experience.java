@@ -1,5 +1,6 @@
 package com.lm.cvmaker.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,7 +39,8 @@ public class Experience {
     private List<String> keywords;
 
     @ManyToOne
-    @JoinColumn(name = "cv_id", nullable = true)
+    @JoinColumn(name = "cv_id")
+    @JsonBackReference
     private Cv cv;
 
 

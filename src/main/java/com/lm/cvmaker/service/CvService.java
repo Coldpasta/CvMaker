@@ -55,18 +55,19 @@ public class CvService {
     }
 
     public Cv generateAndSaveCv(Long userId, CvRequest request) {
-
+        System.out.println("Searching for user with ID: " + userId);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Cv cv = new Cv();
+
         cv.setKeywords(request.getKeywords());
         cv.setEducation(request.getEducation());
         cv.setProjects(request.getProjects());
 
         List<Experience> experiences = request.getExperiences().stream()
                 .map(exp -> new Experience(exp.getJobTitle(), exp.getCompany(), exp.getStartYear(), exp.getEndYear(), exp.getKeywords()))
-                .collect(Collectors.toList());;
+                .collect(Collectors.toList());
         cv.setExperiences(experiences);
 
         for (Experience experience : experiences) {
@@ -80,8 +81,14 @@ public class CvService {
 
     }
 
-    public List<Cv> getUserCvs(Long id) {
-        return cvRepository.findByUserId(id);
+    public Cv getUserCvs(Long id) {
+        Cv cv = cvRepository.findByIdBasic(id)
+                .orElseThrow(() -> new RuntimeException("CV not found"));
+
+        // Manually load experiences & education
+        cv.setExperiences(experienceRepository.findByCvId(id));
+        cv.setEducation(educationRepository.findByCvId(id));
+        return cv;
     }
 
     public List<Cv> getAllCvs() {

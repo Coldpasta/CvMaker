@@ -60,7 +60,7 @@ public class HugginFaceService {
         RestTemplate restTemplate = new RestTemplate();
 
         // Convert CV into a prompt for AI
-        String prompt = "Generate a professional CV summary based on these experiences:\n";
+        String prompt = "Generate a short summary of a professional carrier based on  these experiences:\n";
         for (Experience exp : cv.getExperiences())
             prompt += "- " + exp.getJobTitle() + " at " + exp.getCompany() +
                     " (" + exp.getStartYear() + "-" + exp.getEndYear() + " years). Keywords: " +
@@ -84,7 +84,7 @@ public class HugginFaceService {
         RestTemplate restTemplate = new RestTemplate();
 
         // Create prompt for a single job experience
-        String prompt = "Generate a professional paragraph for a job role: " +
+        String prompt = "Generate a paragraph with bullet points with description of main responsibilities for a job role: " +
                 experience.getJobTitle() + " at " + experience.getCompany() +
                 ". Keywords: " + String.join(", ", experience.getKeywords()) +
                 ". Work experience: " + experience.getStartYear() + "-" + experience.getEndYear() + " years.";
@@ -105,7 +105,7 @@ public class HugginFaceService {
     }
 
 
-    public List<Cv> getUserCvs(Long userId) {
-        return cvRepository.findByUserId(userId);
+    public Optional<Cv> getUserCvs(Long userId) {
+        return cvRepository.findByIdBasic(userId);
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/cv")
@@ -27,8 +28,8 @@ public class CvController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<List<Cv>> getUserCvs(@PathVariable Long userId) {
-        List<Cv> cvs = cvService.getUserCvs(userId);
+    public ResponseEntity<Cv> getUserCvs(@PathVariable Long userId) {
+        Cv cvs = cvService.getUserCvs(userId);
         return ResponseEntity.ok(cvs);
     }
 
