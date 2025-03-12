@@ -1,7 +1,6 @@
 package com.lm.cvmaker.config;
 
 import com.lm.cvmaker.security.JwtFilter;
-import jakarta.servlet.Filter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
