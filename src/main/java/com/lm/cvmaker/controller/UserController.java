@@ -3,6 +3,7 @@ package com.lm.cvmaker.controller;
 import com.lm.cvmaker.model.User;
 import com.lm.cvmaker.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -34,4 +35,16 @@ public class UserController {
             return "Invalid email or password.";
         }
     }
+
+    @DeleteMapping("/{email}")
+    public ResponseEntity<?> deleteUser(@PathVariable String email){
+
+        try {
+            return ResponseEntity.ok(userService.deleteUser(email));
+        }
+        catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().body("User with the email " +email+" not found");
+        }
+    }
+
 }

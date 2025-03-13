@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/cv")
@@ -33,4 +32,20 @@ public class CvController {
         return ResponseEntity.ok(cvs);
     }
 
+    @GetMapping
+    public List<Cv> getAllCvs() {
+        return cvService.getAllCvs();
+    }
+
+
+    @DeleteMapping("/{cvId}")
+    public ResponseEntity<?> deleteCv(@PathVariable Long cvId) {
+        try {
+            return ResponseEntity.ok(cvService.deleteCv(cvId));
+
+        } catch (IllegalArgumentException e) {
+
+            return ResponseEntity.badRequest().body("Cv with id " + cvId + " was not found");
+        }
+    }
 }

@@ -5,7 +5,7 @@ import com.lm.cvmaker.model.CvRequest;
 import com.lm.cvmaker.model.Experience;
 import com.lm.cvmaker.model.User;
 import com.lm.cvmaker.persistence.*;
-import lombok.RequiredArgsConstructor;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,42 +16,17 @@ import java.util.stream.Collectors;
 public class CvService {
 
     private final CvRepository cvRepository;
-    private final ProjectRepository projectRepository;
     private final ExperienceRepository experienceRepository;
     private final EducationRepository educationRepository;
     private final HugginFaceService hugginFaceService;
     private final UserRepository userRepository;
 
-    public CvService(CvRepository cvRepository, ProjectRepository projectRepository, ExperienceRepository experienceRepository, EducationRepository educationRepository, HugginFaceService hugginFaceService, UserRepository userRepository) {
+    public CvService(CvRepository cvRepository, ExperienceRepository experienceRepository, EducationRepository educationRepository, HugginFaceService hugginFaceService, UserRepository userRepository) {
         this.cvRepository = cvRepository;
-        this.projectRepository = projectRepository;
         this.experienceRepository = experienceRepository;
         this.educationRepository = educationRepository;
         this.hugginFaceService = hugginFaceService;
         this.userRepository = userRepository;
-    }
-
-    public Cv createCv(Cv cv) {
-        String generatedSummary = hugginFaceService.generateSummary(cv);
-        cv.setSummary(generatedSummary);
-        Cv savedCv = cvRepository.save(cv);
-
-        cv.getExperiences().forEach(exp -> {
-            exp.setCv(savedCv);
-            experienceRepository.save(exp);
-        });
-
-        cv.getEducation().forEach(edu -> {
-            edu.setCv(savedCv);
-            educationRepository.save(edu);
-        });
-
-        cv.getProjects().forEach(project -> {
-            project.setCv(savedCv);
-            projectRepository.save(project);
-        });
-
-        return savedCv;
     }
 
     public Cv generateAndSaveCv(Long userId, CvRequest request) {
@@ -64,6 +39,9 @@ public class CvService {
         cv.setKeywords(request.getKeywords());
         cv.setEducation(request.getEducation());
         cv.setProjects(request.getProjects());
+        cv.setUser(user);
+        cv.setFullName(user.getName());
+        cv.setEmail(user.getEmail());
 
         List<Experience> experiences = request.getExperiences().stream()
                 .map(exp -> new Experience(exp.getJobTitle(), exp.getCompany(), exp.getStartYear(), exp.getEndYear(), exp.getKeywords()))
@@ -75,8 +53,8 @@ public class CvService {
             experience.setDescription(jobSummary);
         }
 
-        String generatedText = hugginFaceService.generateSummary(cv);
-        cv.setGeneratedText(generatedText);
+        String generatedText = hugginFaceService.generateProfessionalTitle(cv);
+        cv.setProfessionalTitle(generatedText);
         return cvRepository.save(cv);
 
     }
@@ -84,8 +62,6 @@ public class CvService {
     public Cv getUserCvs(Long id) {
         Cv cv = cvRepository.findByIdBasic(id)
                 .orElseThrow(() -> new RuntimeException("CV not found"));
-
-        // Manually load experiences & education
         cv.setExperiences(experienceRepository.findByCvId(id));
         cv.setEducation(educationRepository.findByCvId(id));
         return cv;
@@ -95,8 +71,17 @@ public class CvService {
         return cvRepository.findAll();
     }
 
-    public void deleteCv(Long id) {
-        cvRepository.deleteById(id);
+    @Transactional
+    public Optional<Cv> deleteCv(Long id) {
+        Optional<Cv> cvOptional = cvRepository.findByIdBasic(id);
+        if (cvOptional.isEmpty()) {
+            throw new IllegalArgumentException("Cv with id" + id + "was not found");
+        } else
+            cvRepository.deleteById(id);
+        return cvRepository.findByIdBasic(id);
     }
 
+
 }
+
+

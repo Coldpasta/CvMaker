@@ -3,9 +3,7 @@ package com.lm.cvmaker.service;
 import com.lm.cvmaker.model.User;
 import com.lm.cvmaker.persistence.UserRepository;
 import com.lm.cvmaker.security.JwtUtil;
-import com.lm.cvmaker.utils.PasswordUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -43,12 +41,22 @@ public class UserService {
     public String loginUser(String email, String password) {
         Optional<User> userOpt = userRepository.findByEmail(email);
 
-        if (userOpt.isPresent()&& passwordEncoder.matches(password,userOpt.get().getPassword())) {
+        if (userOpt.isPresent() && passwordEncoder.matches(password, userOpt.get().getPassword())) {
             User user = userOpt.get();
             return jwtUtil.generateToken(email);
         }
-throw new RuntimeException("Invalid credentials");
+        throw new RuntimeException("Invalid credentials");
 
+    }
+
+    @Transactional
+    public Optional<User> deleteUser(String email) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (optionalUser.isEmpty()) {
+            throw new IllegalArgumentException("user not found");
+        } else
+            userRepository.deleteUserByEmail(email);
+        return optionalUser;
     }
 
 }

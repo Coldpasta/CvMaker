@@ -39,7 +39,7 @@ public class Experience {
     private List<String> keywords;
 
     @ManyToOne
-    @JoinColumn(name = "cv_id")
+    @JoinColumn(name = "cv_id", nullable = false)
     @JsonBackReference
     private Cv cv;
 

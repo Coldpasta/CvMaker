@@ -56,11 +56,11 @@ public class HugginFaceService {
 
     }
 
-    public String generateSummary(Cv cv) {
+    public String generateProfessionalTitle(Cv cv) {
         RestTemplate restTemplate = new RestTemplate();
 
-        // Convert CV into a prompt for AI
-        String prompt = "Generate a short summary of a professional carrier based on  these experiences:\n";
+        // Creates a professional title to be put as the title next to the candidate's name
+        String prompt = "Generate a single professional title for a candidate with these professional experiences :\n";
         for (Experience exp : cv.getExperiences())
             prompt += "- " + exp.getJobTitle() + " at " + exp.getCompany() +
                     " (" + exp.getStartYear() + "-" + exp.getEndYear() + " years). Keywords: " +

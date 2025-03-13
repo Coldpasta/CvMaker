@@ -1,5 +1,6 @@
 package com.lm.cvmaker.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -23,7 +24,7 @@ public class Cv {
 
     @Lob
     @Column(columnDefinition = "TEXT")
-    private String generatedText;
+    private String professionalTitle;
 
     private String fullName;
     private String email;
@@ -33,7 +34,7 @@ public class Cv {
     @ElementCollection
     private List<String> skills;
 
-    @OneToMany(mappedBy = "cv", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "cv", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Experience> experiences;
     @OneToMany(mappedBy = "cv", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -44,11 +45,12 @@ public class Cv {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
     public Cv(String keywords, String generatedText, User user) {
         this.keywords = keywords;
-        this.generatedText = generatedText;
+        this.professionalTitle = generatedText;
         this.user = user;
 
     }
