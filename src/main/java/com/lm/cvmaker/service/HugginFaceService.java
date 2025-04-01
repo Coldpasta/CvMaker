@@ -36,7 +36,7 @@ public class HugginFaceService {
         headers.set("Authorization", "Bearer " + apiKey);
         headers.set("Content-Type", "application/json");
 
-        // Create a prompt sentence using the keywords
+        // MAIN PROMPT
         String prompt = "Write a CV paragraph containing of bullet points that would be fitted for a position that was using these skills: " + keywords;
 
         Map<String, Object> requestBody = Collections.singletonMap("inputs", prompt);
@@ -59,7 +59,7 @@ public class HugginFaceService {
     public String generateProfessionalTitle(Cv cv) {
         RestTemplate restTemplate = new RestTemplate();
 
-        // Creates a professional title to be put as the title next to the candidate's name
+        //PROMPT for candidate professional title
         String prompt = "Generate a single professional title for a candidate with these professional experiences :\n";
         for (Experience exp : cv.getExperiences())
             prompt += "- " + exp.getJobTitle() + " at " + exp.getCompany() +
@@ -83,7 +83,7 @@ public class HugginFaceService {
     public String generateExperienceSummary(Experience experience) {
         RestTemplate restTemplate = new RestTemplate();
 
-        // Create prompt for a single job experience
+        // prompt for a single job experience
         String prompt = "Generate a paragraph with bullet points with description of main responsibilities for a job role: " +
                 experience.getJobTitle() + " at " + experience.getCompany() +
                 ". Keywords: " + String.join(", ", experience.getKeywords()) +
