@@ -9,6 +9,6 @@ public class CvRequest {
     private String keywords;
     private List<Education> education;
     private List<Project> projects;
-    private List<Experience> experiences;  // Now includes keywords per job
+    private List<Experience> experiences;  
 }
 
